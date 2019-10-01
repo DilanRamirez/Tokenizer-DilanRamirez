@@ -13,19 +13,33 @@ int string_length(char* words){
     length++;
     words++;
   }
-
   return length;
 }
 
-
 char is_valid_character(char c){
-  if((c >= 'a' &&  c <= 'z') || (c >= 'A' &&  c <= 'Z') || (c == '-') || (c != ' ')){
-    return 1;
-  }
-  
-  else{
+  if(c == ' ' || c == '\n' || c=='\0'){
     return 0;
   }
+  else{
+    return 1;
+  }
+}
+
+int count_words(char* str){
+  int count = 0, space = 0, noSpace = 1;
+  int state = space;
+  while(*str != '\0'){
+    if(*str == ' '){
+      state = space;
+    }
+    else if(state == space){
+      state = noSpace;
+      count++;
+    }
+    str++;
+  }
+  
+  return count;
 }
 
 char* find_word_start(char* str){
@@ -38,43 +52,19 @@ char* find_word_start(char* str){
     }
     value++;
   }
-
   return value;
 }
 
 char* find_word_end(char* str){
   char *value = str;
-  int valid = 0;
-  while(*value){
+  int valid = 1;
+  while(valid != 0){
     valid = is_valid_character(*value);
-    if(valid == 0){
-      return value;
-    }
+    if(valid == 0) break;
     value++;
   }
-
   return value;
 }
-
-
-
-int count_words(char* str){
-  int count = 0, space = 0, noSpace = 1;
-  int state = space;
-  while(*str != '\0'){
-    if(*str == ' '){
-      state = space;
-    }
-    
-    else if(state == space){
-      state = noSpace;
-      count++;
-    }
-    str++;
-  }
-  return count;
-}
-
 
 void copy_word(char* str, char* copy){
   while(*str != '\0'){
@@ -83,13 +73,17 @@ void copy_word(char* str, char* copy){
     }
     str++;
   }
+  while(*copy != '\0'){
+    if(*copy == ' ')
+      copy++;
+    copy++;
+  }
 }
 
-
 char* tokenCopy(char* str){
-  int length=0, i;
+  int length = 0;
   char *copy = str;
-  while(*str != '\0' && *str != ' '){
+  while(*str != '\0' && *str != ' ' && *str != '\n'){
     length++;
     str++;
   }
@@ -97,51 +91,61 @@ char* tokenCopy(char* str){
   char *string = (char *)malloc(sizeof(char)*(length + 1));
   char *ret = string;
 
-  if(*string != NULL)
-    printf("TOKEN_COPY\n");
-  
-  while(*copy!= '\0' && *copy != ' '){
+  while(*copy!= '\0' && *copy != ' ' && *copy != '\n'){
     *string = *copy;
     string++;
     copy++;
-
   }
-  printf("\n");
-  return ret;
-  
+    return ret;
 }
-
 
 char** tokenize(char* str){
   int numWords=0;
-  char *copy, *stringPointer, *start, *end, *newStart, *NS;
-  numWords = count_words(str);
-  char **tokens = (char **)malloc(sizeof(char*)*(numWords + 1));
-  tokenCopy(str);
-  newStart = str;
-
-  while(*str != '\0'){
-    start = find_word_start(str);
-    end = find_word_end(str);
-    str++;
-    if(*end == ' ' && *start != ' '){
-      NS = start;
-    }
-    
-    start++;
-    end++;
-  }
+  char *copy, *start;
   
-  tokenCopy(NS);
-  NS++;
+  numWords = count_words(str);
+  char **tokens = (char **)malloc(sizeof(char*)*(numWords+1));
+  start = str;
+  char** outTokens = tokens;
+  start = find_word_start(start);  
+  while(*start){
+    *outTokens = tokenCopy(start);
+    start = find_word_end(start);
+    start = find_word_start(start);
+    outTokens++;
+  }
+  *outTokens = NULL;
+  return tokens;
 }
 
+void print_tokens(char ** tokens){
+  int pos = 0;
+  printf("\n----PRINTING TOKENS-----\n");
+  while(*tokens){
+    printf("tokens[%d] = %s\n",pos, *tokens);
+    tokens++;
+    pos++;
+  }
+}
+
+void free_tokens(char** tokens){
+  printf("\n----FREEING TOKENS----\n");
+  free(*tokens);
+  *tokens = NULL;
+  /*
+    while(*tokens){
+    free(*tokens);
+    tokens++;
+    }
+  */
+}
 
 int main(){
-  char word[50], c;
-  getSentence(word);
-  printf("%s", word);
-  tokenize(word);
+  char sentence[50];
+  char **tokens;
+  int a = 0;
+  getSentence(sentence);
+  tokens = tokenize(sentence);
+  print_tokens(tokens);
   return 0;
-
 }
