@@ -3,10 +3,9 @@
 #include "tokenizer.h"
 
 
-
 int main(){
 
-  int answer = 0, id = 0, option = 0;
+  int answer = 0, id = 0, option = 0, c;
   char sentence[50];
   char **tokens, *str, *ansAux;
   List *list = init_history();
@@ -14,7 +13,7 @@ int main(){
   printf("---------WELCOME-------\n");
 
   do{
-    fflush(stdin);
+    while((c = getchar()) != '\n' && c!= EOF);
     getSentence(sentence);
     printf("\nChoose and Option from Below:\n");
     printf("1. Tokenize a String\n");
