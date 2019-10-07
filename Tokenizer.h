@@ -1,135 +1,43 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _TOKENIZER_
+#define _TOKENIZER_
 
+/* Counts the number of characters in the string argument. */
+int string_length(char* str);
 
-void getSentence(char sentence[50]){
-  printf("Enter Sentence:");
-  fgets(sentence, 50, stdin);
-}
+/* Evaluates if the character c is an acceptable character for
+   a token. Acceptable characters include any alphanumeric or
+   special character. Unacceptable characters include any
+   whitespace or control characters.
+   Returns 0 if not, 1 if yes. */
+char is_valid_character(char c);
 
-int string_length(char* words){
-  int length = 0;
-  while(*words !='\0'){
-    length++;
-    words++;
-  }
-  return length;
-}
+/* Finds the next word in the string. 
+   For example, given an input of "  my cake" the function
+   should return "my cake". */
+char* find_word_start(char* str);
 
-char is_valid_character(char c){
-  if(c == ' ' || c == '\0' || c == '%' || c == '#' || c == '&' || c == '!' || c == '@' || c == ';' || c == '$' || c == '^' || c == '*'){
-    return 0;
-  }
-  else{
-    return 1;
-  }
-}
+/* Finds the end of current word.
+   For example, given an input of "my cake" the function
+   should return " cake". */
+char* find_word_end(char* str);
 
-int count_words(char* str){
-  int count = 0, space = 0, noSpace = 1;
-  int state = space;
-  while(*str != '\0'){
-    if(*str == ' '){
-      state = space;
-    }
-    else if(state == space){
-      state = noSpace;
-      count++;
-    }
-    str++;
-  }
-  
-  return count;
-}
+/* Counts the number of words in the string argument. */
+int count_words(char* str);
 
-char* find_word_start(char* str){
-  char *value = str;
-  int valid = 0;
-  while(*value){
-    valid = is_valid_character(*value);
-    if(valid == 1){
-      return value;
-    }
-    value++;
-  }
-  return value;
-}
+/* Copies the next word in str to copy. */
+void copy_word(char* str, char* copy);
 
-char* find_word_end(char* str){
-  char *value = str;
-  int valid = 1;
-  while(valid != 0){
-    valid = is_valid_character(*value);
-    if(valid == 0) break;
-    value++;
-  }
-  return value;
-}
+/* Tokenizes the string argument into an array of tokens.
+   For example, "hello world string" would result in:
+     tokens[0] = "hello"
+     tokens[1] = "world"
+     tokens[2] = "string" */
+char** tokenize(char* str);
 
-void copy_word(char* str, char* copy){
-  while(*str != '\0'){
-    if(*str == ' '){
-      copy = str;
-    }
-    str++;
-  }
-  while(*copy != '\0'){
-    if(*copy == ' ')
-      copy++;
-    copy++;
-  }
-}
+/* Prints all tokens. */
+void print_tokens(char** tokens);
 
-char* tokenCopy(char* str){
-  int length = 0;
-  char *copy = str;
-  while(*str != '\0' && *str != ' ' && *str != '\n'){
-    length++;
-    str++;
-  }
+/* Frees all tokens and the array containing the tokens. */
+void free_tokens(char** tokens);
 
-  char *string = (char *)malloc(sizeof(char)*(length + 1));
-  char *ret = string;
-
-  while(*copy!= '\0' && *copy != ' ' && *copy != '\n'){
-    *string = *copy;
-    string++;
-    copy++;
-  }
-    return ret;
-}
-
-char** tokenize(char* str){
-  int numWords=0;
-  char *copy, *start;
-  
-  numWords = count_words(str);
-  char **tokens = (char **)malloc(sizeof(char*)*(numWords+1));
-  start = str;
-  char** outTokens = tokens;
-  start = find_word_start(start);  
-  while(*start){
-    *outTokens = tokenCopy(start);
-    start = find_word_end(start);
-    start = find_word_start(start);
-    outTokens++;
-  }
-  *outTokens = NULL;
-  return tokens;
-}
-
-void print_tokens(char ** tokens){
-  int pos = 0;
-  printf("\n----PRINTING TOKENS-----\n");
-  while(*tokens){
-    printf("tokens[%d] = %s\n",pos, *tokens);
-    tokens++;
-    pos++;
-  }
-}
-
-void free_tokens(char** tokens){
-  printf("\n----FREEING TOKENS----\n");
-  free(*tokens);
-  *tokens = NULL;
-}
+#endif
