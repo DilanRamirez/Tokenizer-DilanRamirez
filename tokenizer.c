@@ -1,12 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "tokenizer.h"
 
-
-void getSentence(char sentence[50]){
-  printf("Enter Sentence:");
+/* getSentence() gets a char pointer as paramter 
+   to write a string.*/
+void getSentence(char* sentence){   
+  printf("Enter Sentence: ");
   fgets(sentence, 50, stdin);
+  return;
 }
 
+/* string_length() uses a char pointer to traverse the whole sentence
+   and count the number of characters it containsn and returns the length
+   of the string */
 int string_length(char* words){
   int length = 0;
   while(*words !='\0'){
@@ -16,8 +22,10 @@ int string_length(char* words){
   return length;
 }
 
+/*This function reaad character by character of the stirng and returns 0 
+  if the charaters is a invalid character or 1 if it is a valid character.*/
 char is_valid_character(char c){
-  if(c == ' ' || c == '\n' || c=='\0'){
+  if(c == ' ' || c == '\0' || c == '%' || c == '#' || c == '&' || c == '!' || c == '@' || c == ';' || c == '$' || c == '^' || c == '*'){
     return 0;
   }
   else{
@@ -25,6 +33,8 @@ char is_valid_character(char c){
   }
 }
 
+/*This function traverse the string to keep track the number of words
+  and returns the number of words in the string*/
 int count_words(char* str){
   int count = 0, space = 0, noSpace = 1;
   int state = space;
@@ -42,6 +52,9 @@ int count_words(char* str){
   return count;
 }
 
+/* This function uses a char pointer as parameter to traverse the string
+   character by character. It uses is_valid_character() to identify when it
+   it is a valid word to start the tokenizer. */
 char* find_word_start(char* str){
   char *value = str;
   int valid = 0;
@@ -55,6 +68,9 @@ char* find_word_start(char* str){
   return value;
 }
 
+/* This function uses a char pointer as parameter to traverse the string
+   character by character. It uses is_valid_character() to identify when the first word finished
+   to then, use it whith the tokenizer.*/
 char* find_word_end(char* str){
   char *value = str;
   int valid = 1;
@@ -66,6 +82,8 @@ char* find_word_end(char* str){
   return value;
 }
 
+/*This function just uses two pointers to copy the address of a pointer to another
+  and copy the value of that pointer.*/
 void copy_word(char* str, char* copy){
   while(*str != '\0'){
     if(*str == ' '){
@@ -78,8 +96,10 @@ void copy_word(char* str, char* copy){
       copy++;
     copy++;
   }
+  return;
 }
 
+/*This function separes a piece of memory to store the fisrt word of the string using malloc.*/
 char* tokenCopy(char* str){
   int length = 0;
   char *copy = str;
@@ -99,6 +119,9 @@ char* tokenCopy(char* str){
     return ret;
 }
 
+/*Tokenizer implements count_word(), find_word_start(), find_word_end(), and tokenCopy()
+  to traverse the whole string and split it by toknes/words and return a pointer to a malloc
+  that cointains the pointers of the tokens and returns a pointer to the pointers*/
 char** tokenize(char* str){
   int numWords=0;
   char *copy, *start;
@@ -118,6 +141,7 @@ char** tokenize(char* str){
   return tokens;
 }
 
+/*Print all the tokens/word of the string that are in memory*/
 void print_tokens(char ** tokens){
   int pos = 0;
   printf("\n----PRINTING TOKENS-----\n");
@@ -127,25 +151,10 @@ void print_tokens(char ** tokens){
     pos++;
   }
 }
-
+/*This function clean the memory used to store all the pointers
+  in malloc*/
 void free_tokens(char** tokens){
   printf("\n----FREEING TOKENS----\n");
   free(*tokens);
   *tokens = NULL;
-  /*
-    while(*tokens){
-    free(*tokens);
-    tokens++;
-    }
-  */
-}
-
-int main(){
-  char sentence[50];
-  char **tokens;
-  int a = 0;
-  getSentence(sentence);
-  tokens = tokenize(sentence);
-  print_tokens(tokens);
-  return 0;
 }
