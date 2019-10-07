@@ -91,7 +91,19 @@ each node containing:
    - Free all Items and the List.
 
 
+INSTRUCTIONS TO USED SIMPLEUI INTERFACE:
+ 1. Make a new executable file to run all the files using the next code:
+   - CFLAGS=-I.
+    simpleUI: history.c simpleUI.c tokenizer.c tokenizer.h history.h
+	gcc history.c tokenizer.c simpleUI.c -o final
+    clean:
+	rm final
 
+ 2. Next, write in the shell "Make simpleUI" to compile the code.
+ 3. Run the compiled-file named "final"
+ 4. Once the file is running, there will show a "Welcome" header.
+    Then, click enter to write a sentence.
+ 5. Choose an option from the list and enjoy it.
 
 
 
